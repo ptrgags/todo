@@ -1,12 +1,10 @@
 #!/usr/bin/env python
 import argparse
 from add_task import AddTask
+from done_task import DoneTask
 from list_tasks import ListTasks
 
 def subtask(args):
-    print(args)
-
-def done(args):
     print(args)
 
 def task_id(arg):
@@ -41,7 +39,9 @@ if __name__ == "__main__":
     done_parser = subparsers.add_parser('done')
     done_parser.add_argument('task_id', nargs='+', type=task_id,
         help='One or more task/subtask IDs')
-    done_parser.set_defaults(func=done)
+    done_parser.add_argument('-u', '--uncheck', action='store_true',
+        help='If specified, UNcheck tasks')
+    done_parser.set_defaults(func=DoneTask())
     
     list_parser = subparsers.add_parser('list')
     #list_parser.add_argument('-c', '--category', nargs='+',
@@ -51,5 +51,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
     try:
         args.func(args)
-    except AttributeError:
+    except AttributeError as e:
+        print(e)
         parser.print_help()
