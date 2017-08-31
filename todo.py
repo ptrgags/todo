@@ -17,7 +17,6 @@ def list_tasks(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.set_defaults(func=todo)
     subparsers = parser.add_subparsers(dest='command')
 
     add_parser = subparsers.add_parser('add')
@@ -45,4 +44,7 @@ if __name__ == "__main__":
     list_parser.set_defaults(func=ListTasks())
 
     args = parser.parse_args()
-    args.func(args)
+    try:
+        args.func(args)
+    except AttributeError:
+        parser.print_help()
