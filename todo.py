@@ -9,6 +9,15 @@ def subtask(args):
 def done(args):
     print(args)
 
+def task_id(arg):
+    if arg[0].upper() != 'T':
+        raise argparse.ArgumentTypeError(arg + ": task IDs must begin with T")
+    
+    try:
+        return int(arg[1:])
+    except ValueError:
+        raise argparse.ArgumentTypeError(arg + ": Task ID # must be an int")
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers(dest='command')
@@ -22,7 +31,7 @@ if __name__ == "__main__":
 
     '''
     subtask_parser = subparsers.add_parser('subtask')
-    subtask_parser.add_argument('parent_id',
+    subtask_parser.add_argument('parent_id', type=task_id,
         help='ID of the parent task.')
     subtask_parser.add_argument('task_name', nargs='+',
         help='One or more task names to add as subtasks') 
@@ -30,7 +39,7 @@ if __name__ == "__main__":
     '''
 
     done_parser = subparsers.add_parser('done')
-    done_parser.add_argument('task_id', nargs='+',
+    done_parser.add_argument('task_id', nargs='+', type=task_id,
         help='One or more task/subtask IDs')
     done_parser.set_defaults(func=done)
     
