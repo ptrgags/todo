@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import argparse
 from add_task import AddTask
+from list_tasks import ListTasks
 
 def todo(args):
     print(args)
@@ -41,7 +42,7 @@ if __name__ == "__main__":
     list_parser = subparsers.add_parser('list')
     list_parser.add_argument('-c', '--category', nargs='+',
         help='Only list tasks of the given categories')
-    list_parser.set_defaults(func=list_tasks)
+    list_parser.set_defaults(func=ListTasks())
 
     args = parser.parse_args()
     args.func(args)
