@@ -1,6 +1,6 @@
 from database import db
 
-class AddTask: 
+class AddTasks: 
     def __call__(self, args):
         for name in args.task_name:
             data = {

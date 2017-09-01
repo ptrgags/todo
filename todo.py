@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import argparse
-from add_task import AddTask
-from done_task import DoneTask
+from add_tasks import AddTasks
+from done_tasks import DoneTasks
 from list_tasks import ListTasks
 from delete_tasks import DeleteTasks
 
@@ -26,7 +26,7 @@ if __name__ == "__main__":
         help='One or more task names to add to the database')
     add_parser.add_argument('-c', '--category', 
         help='Set a category for the task')
-    add_parser.set_defaults(func=AddTask())
+    add_parser.set_defaults(func=AddTasks())
 
     '''
     subtask_parser = subparsers.add_parser('subtask')
@@ -42,7 +42,7 @@ if __name__ == "__main__":
         help='One or more task/subtask IDs')
     done_parser.add_argument('-u', '--uncheck', action='store_true',
         help='If specified, UNcheck tasks')
-    done_parser.set_defaults(func=DoneTask())
+    done_parser.set_defaults(func=DoneTasks())
 
     delete_parser = subparsers.add_parser('delete')
     delete_parser.add_argument('task_id', nargs='+', type=task_id,

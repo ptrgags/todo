@@ -1,6 +1,6 @@
 from database import db
 
-class DoneTask: 
+class DoneTasks: 
     def __call__(self, args):
         for eid in args.task_id:
             record = db.get(eid=eid) 
