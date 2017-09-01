@@ -24,6 +24,6 @@ class ListTasks:
         for cat in by_category:
             if cat is None:
                 continue
-            print(cat)
+            print("\n" + cat)
             for task in by_category[cat]:
                 print(self.format_task(task))
