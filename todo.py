@@ -3,6 +3,7 @@ import argparse
 from add_task import AddTask
 from done_task import DoneTask
 from list_tasks import ListTasks
+from delete_tasks import DeleteTasks
 
 def subtask(args):
     print(args)
@@ -42,11 +43,17 @@ if __name__ == "__main__":
     done_parser.add_argument('-u', '--uncheck', action='store_true',
         help='If specified, UNcheck tasks')
     done_parser.set_defaults(func=DoneTask())
+
+    delete_parser = subparsers.add_parser('delete')
+    delete_parser.add_argument('task_id', nargs='+', type=task_id,
+        help='One or more task/subtask IDs')
+    delete_parser.set_defaults(func=DeleteTasks())
     
     list_parser = subparsers.add_parser('list')
     list_parser.add_argument('-c', '--category', nargs='+',
         help='Only list tasks of the given categories')
     list_parser.set_defaults(func=ListTasks())
+
 
     args = parser.parse_args()
     try:
