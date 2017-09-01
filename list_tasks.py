@@ -4,7 +4,7 @@ class ListTasks:
     def format_task(self, task):
         check = 'x' if task['completed'] else ' '
         tid = 'T{}'.format(task.eid)
-        return "- [{}] {} {}".format(check, tid, task['name'])
+        return "- [{}] {} - {}".format(check, tid, task['name'])
 
     def bucket_categories(self):
         by_category = {}
