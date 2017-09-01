@@ -18,6 +18,9 @@ def task_id(arg):
     except ValueError:
         raise argparse.ArgumentTypeError(arg + ": Task ID # must be an int")
 
+def category(arg):
+    return arg.upper()
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers(dest='command')
@@ -25,7 +28,7 @@ if __name__ == "__main__":
     add_parser = subparsers.add_parser('add')
     add_parser.add_argument('task_name', nargs='+', 
         help='One or more task names to add to the database')
-    add_parser.add_argument('-c', '--category', 
+    add_parser.add_argument('-c', '--category', type=category,
         help='Set a category for the task')
     add_parser.set_defaults(func=AddTasks())
 
@@ -51,12 +54,12 @@ if __name__ == "__main__":
     delete_parser.set_defaults(func=DeleteTasks())
     
     list_parser = subparsers.add_parser('list')
-    list_parser.add_argument('-c', '--category', nargs='+',
+    list_parser.add_argument('-c', '--category', nargs='+', type=category,
         help='Only list tasks of the given categories')
     list_parser.set_defaults(func=ListTasks())
 
     edit_parser = subparsers.add_parser('edit')
-    edit_parser.add_argument('-c', '--category',
+    edit_parser.add_argument('-c', '--category', type=category,
         help='set a new category')
     edit_parser.add_argument('-n', '--name',
         help='set all specified tasks to have this name')
