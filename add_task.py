@@ -5,7 +5,7 @@ class AddTask:
         for name in args.task_name:
             data = {
                 'name': name,
-                #'category': args.category,
+                'category': args.category,
                 'completed': False,
                 'parent': None
             }

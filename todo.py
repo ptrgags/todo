@@ -23,8 +23,8 @@ if __name__ == "__main__":
     add_parser = subparsers.add_parser('add')
     add_parser.add_argument('task_name', nargs='+', 
         help='One or more task names to add to the database')
-    #add_parser.add_argument('-c', '--category', 
-    #    help='Set a category for the task')
+    add_parser.add_argument('-c', '--category', 
+        help='Set a category for the task')
     add_parser.set_defaults(func=AddTask())
 
     '''
@@ -44,8 +44,8 @@ if __name__ == "__main__":
     done_parser.set_defaults(func=DoneTask())
     
     list_parser = subparsers.add_parser('list')
-    #list_parser.add_argument('-c', '--category', nargs='+',
-    #    help='Only list tasks of the given categories')
+    list_parser.add_argument('-c', '--category', nargs='+',
+        help='Only list tasks of the given categories')
     list_parser.set_defaults(func=ListTasks())
 
     args = parser.parse_args()
