@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import argparse
 from add_tasks import AddTasks
+from edit_tasks import EditTasks
 from done_tasks import DoneTasks
 from list_tasks import ListTasks
 from delete_tasks import DeleteTasks
@@ -54,6 +55,14 @@ if __name__ == "__main__":
         help='Only list tasks of the given categories')
     list_parser.set_defaults(func=ListTasks())
 
+    edit_parser = subparsers.add_parser('edit')
+    edit_parser.add_argument('-c', '--category',
+        help='set a new category')
+    edit_parser.add_argument('-n', '--name',
+        help='set all specified tasks to have this name')
+    edit_parser.add_argument('task_id', nargs='+', type=task_id,
+        help='One or more task IDs to edit. All tasks get the same settings')
+    edit_parser.set_defaults(func=EditTasks())
 
     args = parser.parse_args()
     try:
