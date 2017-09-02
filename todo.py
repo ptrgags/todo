@@ -64,6 +64,9 @@ if __name__ == "__main__":
     list_parser = subparsers.add_parser('list')
     list_parser.add_argument('-c', '--category', nargs='+', type=category,
         help='Only list tasks of the given categories')
+    list_parser.add_argument('-a', '--all', 
+        dest='show_all', action='store_true',
+        help='Show all tasks (including completed ones')
     list_parser.set_defaults(func=ListTasks())
 
     edit_parser = subparsers.add_parser('edit')

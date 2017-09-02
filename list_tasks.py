@@ -1,3 +1,4 @@
+from tinydb import Query
 from database import db
 from tasks import Task
 from colors import color
@@ -27,15 +28,23 @@ class ListTasks:
         return "{}{}{} {}".format(
             checkbox_left, check, checkbox_right, task_str)
 
-    def bucket_categories(self):
+    def fetch_tasks(self, show_all):
+        if show_all:
+            return db.all()
+        else:
+            TaskTable = Query()
+            return db.search(TaskTable.completed != True)
+
+    def bucket_categories(self, tasks):
         by_category = {}
-        for record in db.all():
+        for record in tasks:
             task = Task(record)
             by_category.setdefault(task.category, []).append(task)
         return by_category
 
     def __call__(self, args):
-        by_category = self.bucket_categories()
+        tasks = self.fetch_tasks(args.show_all)
+        by_category = self.bucket_categories(tasks)
 
         # Print default category tasks first
         default_tasks = by_category.pop(None, [])
