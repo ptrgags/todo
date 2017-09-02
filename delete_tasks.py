@@ -13,3 +13,4 @@ class DeleteTasks:
                eid,  record['name'])
             if self.prompt_confirmation(message):
                 db.remove(eids=[eid])
+                print("Deleted task T{} - {}".format(eid, record['name']))
