@@ -37,14 +37,18 @@ class ListTasks:
 
     def bucket_categories(self, tasks):
         by_category = {}
-        for record in tasks:
-            task = Task(record)
+        for task in tasks:
             by_category.setdefault(task.category, []).append(task)
         return by_category
 
+    def print_category(self, category):
+        label = color(category + ":", fg=self.COLOR_LABEL)
+        print(label)
+
     def __call__(self, args):
-        tasks = self.fetch_tasks(args.show_all)
-        by_category = self.bucket_categories(tasks)
+        tasks = [Task(record) for record in self.fetch_tasks(args.show_all)]
+        task_trees = Task.build_forest(tasks)
+        by_category = self.bucket_categories(task_trees)
 
         # Print default category tasks first
         default_tasks = by_category.pop(None, [])
@@ -55,8 +59,7 @@ class ListTasks:
 
         # Print the rest of the tasks
         for cat in sorted(by_category):
-            label = color(cat + ":", fg=self.COLOR_LABEL)
-            print(label)
+            self.print_category(cat)
             for task in by_category[cat]:
                 print(self.format_task(task))
             print()
