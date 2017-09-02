@@ -7,9 +7,7 @@ from edit_tasks import EditTasks
 from done_tasks import DoneTasks
 from list_tasks import ListTasks
 from delete_tasks import DeleteTasks
-
-def subtask(args):
-    print(args)
+from make_subtasks import MakeSubtasks
 
 def task_id(arg):
     if arg[0].upper() != 'T':
@@ -40,14 +38,12 @@ if __name__ == "__main__":
         help='Set a category for the task')
     add_parser.set_defaults(func=AddTasks())
 
-    '''
     subtask_parser = subparsers.add_parser('subtask')
     subtask_parser.add_argument('parent', type=task_id,
         help='ID of the parent task.')
     subtask_parser.add_argument('task_name', nargs='+',
         help='One or more task names to add as subtasks') 
-    subtask_parser.set_defaults(func=subtask)
-    '''
+    subtask_parser.set_defaults(func=MakeSubtasks())
 
     done_parser = subparsers.add_parser('done')
     done_parser.add_argument('tasks', nargs='+', type=task_id,
