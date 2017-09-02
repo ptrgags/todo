@@ -7,10 +7,8 @@ class DeleteTasks:
         return answer.lower() == 'y'
 
     def __call__(self, args):
-        for eid in args.task_id:
-            record = db.get(eid=eid) 
-            message = "Are you sure you want to delete T{} - {}?".format(
-               eid,  record['name'])
+        for task in args.tasks:
+            message = "Are you sure you want to delete {}".format(task)
             if self.prompt_confirmation(message):
-                db.remove(eids=[eid])
-                print("Deleted task T{} - {}".format(eid, record['name']))
+                db.remove(eids=[task.eid])
+                print("Deleted task {}".format(task))

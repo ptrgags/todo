@@ -1,4 +1,5 @@
 from database import db
+from tasks import Task
 
 class AddTasks: 
     def __call__(self, args):
@@ -10,4 +11,5 @@ class AddTasks:
                 'parent': None
             }
             eid = db.insert(data)
-            print('Added task T{}: {}'.format(eid, name))
+            task = Task.from_eid(eid)
+            print('Added task {}'.format(task))

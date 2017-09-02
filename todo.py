@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import argparse
 from database import db
+from tasks import Task
 from add_tasks import AddTasks
 from edit_tasks import EditTasks
 from done_tasks import DoneTasks
@@ -19,10 +20,11 @@ def task_id(arg):
     except ValueError:
         raise argparse.ArgumentTypeError(arg + ": Task ID # must be an int")
 
-    if db.get(eid=eid) is None:
-        raise argparse.ArgumentTypeError(arg + ": Task does not exist")
+    task = db.get(eid=eid)
+    if task:
+        return Task(task)
     else:
-        return eid
+        raise argparse.ArgumentTypeError(arg + ": Task does not exist")
 
 def category(arg):
     return arg.upper()
@@ -40,7 +42,7 @@ if __name__ == "__main__":
 
     '''
     subtask_parser = subparsers.add_parser('subtask')
-    subtask_parser.add_argument('parent_id', type=task_id,
+    subtask_parser.add_argument('parent', type=task_id,
         help='ID of the parent task.')
     subtask_parser.add_argument('task_name', nargs='+',
         help='One or more task names to add as subtasks') 
@@ -48,14 +50,14 @@ if __name__ == "__main__":
     '''
 
     done_parser = subparsers.add_parser('done')
-    done_parser.add_argument('task_id', nargs='+', type=task_id,
+    done_parser.add_argument('tasks', nargs='+', type=task_id,
         help='One or more task/subtask IDs')
     done_parser.add_argument('-u', '--uncheck', action='store_true',
         help='If specified, UNcheck tasks')
     done_parser.set_defaults(func=DoneTasks())
 
     delete_parser = subparsers.add_parser('delete')
-    delete_parser.add_argument('task_id', nargs='+', type=task_id,
+    delete_parser.add_argument('tasks', nargs='+', type=task_id,
         help='One or more task/subtask IDs')
     delete_parser.set_defaults(func=DeleteTasks())
     
@@ -69,7 +71,7 @@ if __name__ == "__main__":
         help='set a new category')
     edit_parser.add_argument('-n', '--name',
         help='set all specified tasks to have this name')
-    edit_parser.add_argument('task_id', nargs='+', type=task_id,
+    edit_parser.add_argument('tasks', nargs='+', type=task_id,
         help='One or more task IDs to edit. All tasks get the same settings')
     edit_parser.set_defaults(func=EditTasks())
 

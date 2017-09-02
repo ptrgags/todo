@@ -1,4 +1,5 @@
 from database import db
+from tasks import Task
 
 class EditTasks: 
     def __call__(self, args):
@@ -10,4 +11,9 @@ class EditTasks:
         if args.category:
             props['category'] = args.category
 
-        db.update(props, eids=args.task_id)
+        eids = [t.eid for t in args.tasks]
+        db.update(props, eids=eids)
+
+        for eid in eids:
+            task = Task.from_eid(eid)
+            print("Updated task {}".format(task))
