@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import argparse
+from database import db
 from add_tasks import AddTasks
 from edit_tasks import EditTasks
 from done_tasks import DoneTasks
@@ -14,9 +15,14 @@ def task_id(arg):
         raise argparse.ArgumentTypeError(arg + ": task IDs must begin with T")
     
     try:
-        return int(arg[1:])
+        eid = int(arg[1:])
     except ValueError:
         raise argparse.ArgumentTypeError(arg + ": Task ID # must be an int")
+
+    if db.get(eid=eid) is None:
+        raise argparse.ArgumentTypeError(arg + ": Task does not exist")
+    else:
+        return eid
 
 def category(arg):
     return arg.upper()
