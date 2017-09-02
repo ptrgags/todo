@@ -52,3 +52,25 @@ Checked off task T3 - Buy groceries
 $ todo done -u T2
 Unchecked task T2 - do dishes
 ```
+
+### Delete Tasks
+
+```
+$ todo delete T2
+Are you sure you want to delete T2 - Do dishes? (y/n) y
+Deleted task T2 - Do dishes
+```
+
+### Edit Tasks
+
+```
+$ todo edit -c chores T1
+Edited Tasks:
+T1 - CHORES:do laundry
+
+$ todo add foo
+Added task T4 - foo
+$ todo edit -n bar T4
+Edited Tasks:
+T4 - bar
+```
