@@ -7,9 +7,11 @@ class ListTasks:
     CHECK_MARK = color('✓', fg='green')
     COLOR_BRACKETS = 208
     COLOR_DONE = 239 # grey in ANSI 256-color mode
-    COLOR_LABEL = 208
+    COLOR_LABEL = 208 # orange
+    COLOR_TASK_ARROW = 57 # Saturated purple
+    COLOR_SUBTASK_ARROW = 141 # desaturated purple
 
-    def format_task(self, task):
+    def format_task_label(self, task):
         """
         Format a task like
 
@@ -19,7 +21,7 @@ class ListTasks:
 
         - [x] T2 - Completed task
         """
-        checkbox_left = color('- [', fg=self.COLOR_BRACKETS)
+        checkbox_left = color('[', fg=self.COLOR_BRACKETS)
         checkbox_right = color(']', fg=self.COLOR_BRACKETS)
         check = self.CHECK_MARK if task.completed else ' '
         task_str = task.format_label(with_category=False)
@@ -45,6 +47,64 @@ class ListTasks:
         label = color(category + ":", fg=self.COLOR_LABEL)
         print(label)
 
+    def prefix_lines(self, lines, first_prefix, rest_prefix):
+        first, *rest = lines
+
+        yield first_prefix + first
+
+        for line in rest:
+            yield rest_prefix + line
+
+    def format_middle_subtask(self, task):
+        lines = self.format_subtasks(task)
+        yield from self.prefix_lines(lines, ' ├─> ', ' │   ')
+
+    def format_last_subtask(self, task):
+        lines = self.format_subtasks(task)
+        yield from self.prefix_lines(lines, ' └─> ', '     ')
+
+    def format_subtasks(self, task):
+        yield self.format_task_label(task)
+        if task.subtasks:
+            *middle, last = task.subtasks
+
+            for subtask in middle:
+                yield from self.format_middle_subtask(subtask)
+
+            yield from self.format_last_subtask(last)
+
+
+    def print_single_task(self, task):
+        lines = self.format_subtasks(task)
+        for line in self.prefix_lines(lines, '═══> ', '     '):
+            print(line)
+    
+    def print_first_task(self, task):
+        lines = self.format_subtasks(task)
+        for line in self.prefix_lines(lines, '═╦═> ', ' ║   '):
+            print(line)
+    
+    def print_middle_task(self, task):
+        lines = self.format_subtasks(task)
+        for line in self.prefix_lines(lines, ' ╠═> ', ' ║   '):
+            print(line)
+
+    def print_last_task(self, task):
+        lines = self.format_subtasks(task)
+        for line in self.prefix_lines(lines, ' ╚═> ', '     '):
+            print(line)
+
+    def print_task_forest(self, tasks):
+        if len(tasks) == 1:
+            self.print_single_task(tasks[0])
+        elif len(tasks) >= 2:
+            first, *middle, last = tasks
+            self.print_first_task(first)
+            for task in middle:
+                self.print_middle_task(task)
+            self.print_last_task(last)
+        print()
+
     def __call__(self, args):
         tasks = [Task(record) for record in self.fetch_tasks(args.show_all)]
         task_trees = Task.build_forest(tasks)
@@ -53,13 +113,9 @@ class ListTasks:
         # Print default category tasks first
         default_tasks = by_category.pop(None, [])
         if default_tasks:
-            for task in default_tasks:
-                print(self.format_task(task))
-            print()
+            self.print_task_forest(default_tasks)
 
         # Print the rest of the tasks
         for cat in sorted(by_category):
             self.print_category(cat)
-            for task in by_category[cat]:
-                print(self.format_task(task))
-            print()
+            self.print_task_forest(by_category[cat])
