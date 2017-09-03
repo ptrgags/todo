@@ -1,6 +1,8 @@
 from database import db
 
 class Task:
+    TRISTATE = 'maybe'
+
     def __init__(self, record):
         self.record = record
         self.subtasks = []
@@ -15,7 +17,16 @@ class Task:
 
     @property
     def completed(self): 
-        return self.record.get('completed', False)
+        if not self.subtasks:
+            return self.record.get('completed', False)
+
+        subtask_completion = [s.completed for s in self.subtasks]
+        if all(s is True for s in subtask_completion):
+            return True
+        elif all(s is False for s in subtask_completion):
+            return False
+        else:
+            return self.TRISTATE
 
     @property
     def category(self):

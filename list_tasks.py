@@ -5,11 +5,20 @@ from colors import color
 
 class ListTasks: 
     CHECK_MARK = color('✓', fg='green')
+    TRISTATE = color('■', fg='yellow')
     COLOR_BRACKETS = 208
     COLOR_DONE = 239 # grey in ANSI 256-color mode
     COLOR_LABEL = 208 # orange
     COLOR_TASK_ARROW = 57 # Saturated purple
     COLOR_SUBTASK_ARROW = 48 # mint green
+
+    def format_completed_status(self, task):
+        if task.completed == Task.TRISTATE:
+            return self.TRISTATE
+        elif task.completed is True:
+            return self.CHECK_MARK
+        else:
+            return ' '
 
     def format_task_label(self, task):
         """
@@ -23,10 +32,12 @@ class ListTasks:
         """
         checkbox_left = color('[', fg=self.COLOR_BRACKETS)
         checkbox_right = color(']', fg=self.COLOR_BRACKETS)
-        check = self.CHECK_MARK if task.completed else ' '
+        check = self.format_completed_status(task)
+
         task_str = task.format_label(with_category=False)
-        task_color = self.COLOR_DONE if task.completed else 'white'
+        task_color = self.COLOR_DONE if task.completed is True else 'white'
         task_str = color(task_str, fg=task_color)
+
         return "{}{}{} {}".format(
             checkbox_left, check, checkbox_right, task_str)
 
