@@ -25,7 +25,11 @@ def task_id(arg):
         raise argparse.ArgumentTypeError(arg + ": Task does not exist")
 
 def category(arg):
-    return arg.upper()
+    cat_name = arg.upper()
+    if cat_name == 'NONE':
+        return None
+    else:
+        return cat_name
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -59,7 +63,9 @@ if __name__ == "__main__":
     
     list_parser = subparsers.add_parser('list')
     list_parser.add_argument('-c', '--category', nargs='+', type=category,
-        help='Only list tasks of the given categories')
+        help=(
+            'Only list tasks of the given categories.'
+            'Use "none" to specify no category'))
     list_parser.add_argument('-a', '--all', 
         dest='show_all', action='store_true',
         help='Show all tasks (including completed ones')

@@ -115,10 +115,21 @@ class ListTasks:
             self.print_last_task(last)
         print()
 
+    def category_filter(self, buckets, categories):
+        if categories:
+            return {
+                cat: task 
+                for cat, task in buckets.items() 
+                if cat in categories}
+        else:
+            return buckets
+        
+
     def __call__(self, args):
         tasks = [Task(record) for record in self.fetch_tasks(args.show_all)]
         task_trees = Task.build_forest(tasks)
         by_category = self.bucket_categories(task_trees)
+        by_category = self.category_filter(by_category, args.category)
 
         # Print default category tasks first
         default_tasks = by_category.pop(None, [])
