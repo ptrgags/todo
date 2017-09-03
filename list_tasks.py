@@ -9,7 +9,7 @@ class ListTasks:
     COLOR_DONE = 239 # grey in ANSI 256-color mode
     COLOR_LABEL = 208 # orange
     COLOR_TASK_ARROW = 57 # Saturated purple
-    COLOR_SUBTASK_ARROW = 141 # desaturated purple
+    COLOR_SUBTASK_ARROW = 48 # mint green
 
     def format_task_label(self, task):
         """
@@ -47,21 +47,23 @@ class ListTasks:
         label = color(category + ":", fg=self.COLOR_LABEL)
         print(label)
 
-    def prefix_lines(self, lines, first_prefix, rest_prefix):
+    def prefix_lines(self, lines, first_prefix, rest_prefix, fg=None):
         first, *rest = lines
 
-        yield first_prefix + first
+        yield color(first_prefix, fg=fg) + first
 
         for line in rest:
-            yield rest_prefix + line
+            yield color(rest_prefix, fg=fg) + line
 
     def format_middle_subtask(self, task):
         lines = self.format_subtasks(task)
-        yield from self.prefix_lines(lines, ' ├─> ', ' │   ')
+        yield from self.prefix_lines(
+            lines, ' ├─> ', ' │   ', self.COLOR_SUBTASK_ARROW)
 
     def format_last_subtask(self, task):
         lines = self.format_subtasks(task)
-        yield from self.prefix_lines(lines, ' └─> ', '     ')
+        yield from self.prefix_lines(
+            lines, ' └─> ', '     ', self.COLOR_SUBTASK_ARROW)
 
     def format_subtasks(self, task):
         yield self.format_task_label(task)
@@ -76,22 +78,30 @@ class ListTasks:
 
     def print_single_task(self, task):
         lines = self.format_subtasks(task)
-        for line in self.prefix_lines(lines, '═══> ', '     '):
+        prefixed = self.prefix_lines(
+            lines, '═══> ', '     ', self.COLOR_TASK_ARROW)
+        for line in prefixed:
             print(line)
     
     def print_first_task(self, task):
         lines = self.format_subtasks(task)
-        for line in self.prefix_lines(lines, '═╦═> ', ' ║   '):
+        prefixed = self.prefix_lines(
+            lines, '═╦═> ', ' ║   ', self.COLOR_TASK_ARROW)
+        for line in prefixed:
             print(line)
     
     def print_middle_task(self, task):
         lines = self.format_subtasks(task)
-        for line in self.prefix_lines(lines, ' ╠═> ', ' ║   '):
+        prefixed = self.prefix_lines(
+            lines, ' ╠═> ', ' ║   ', self.COLOR_TASK_ARROW)
+        for line in prefixed:
             print(line)
 
     def print_last_task(self, task):
         lines = self.format_subtasks(task)
-        for line in self.prefix_lines(lines, ' ╚═> ', '     '):
+        prefixed = self.prefix_lines(
+            lines, ' ╚═> ', '     ', self.COLOR_TASK_ARROW)
+        for line in prefixed:
             print(line)
 
     def print_task_forest(self, tasks):

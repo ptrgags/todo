@@ -49,6 +49,9 @@ class Task:
             if task.parent_id is None:
                 # This is a standalone task so add it to the forest
                 forest.append(task)
+            elif task.parent_id not in task_table:
+                # The parent task is hidden, so ignore this task
+                continue
             else:
                 # this is a subtask, so add it to the parent task
                 task_table[task.parent_id].subtasks.append(task)
