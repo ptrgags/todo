@@ -47,6 +47,9 @@ class Task:
     def __str__(self):
         return self.format_label()
 
+    def __repr__(self):
+        return "{}:T{} - {}".format(self.category, self.eid, self.name)
+
     @classmethod
     def from_eid(cls, eid):
         record = db.get(eid=eid)

@@ -78,8 +78,13 @@ class ListTasks:
 
     def format_subtasks(self, task):
         yield self.format_task_label(task)
-        if task.subtasks:
-            *middle, last = task.subtasks
+
+        # Apply filters to the subtasks
+        subtasks = list(self.filter_tasks(task.subtasks))
+
+        # If there are subtasks, prrint them recursively.
+        if subtasks:
+            *middle, last = subtasks
 
             for subtask in middle:
                 yield from self.format_middle_subtask(subtask)
@@ -134,20 +139,47 @@ class ListTasks:
                 if cat in categories}
         else:
             return buckets
+
+    def filter_tasks(self, tasks):
+        for task in tasks:
+            if all(f(task) for f in self.filters):
+                yield task
+
+
+    def print_category_forest(self, category, tasks):
+        filtered = list(self.filter_tasks(tasks))
         
+        # Skip this category if there's no tasks to display
+        if not filtered:
+            return
+
+        # Print all category labels except the default category
+        if category:
+            self.print_category(category) 
+        
+        # print the tasks
+        self.print_task_forest(filtered)
+
+    def make_filters(self, args):
+        self.filters = []
+
+        # Unless --all is specified, filter out completed tasks
+        if not args.show_all:
+            self.filters.append(lambda t: t.completed is not True)
 
     def __call__(self, args):
-        tasks = [Task(record) for record in self.fetch_tasks(args.show_all)]
+        tasks = [Task(t) for t in db.all()]
         task_forest = Task.build_forest(tasks)
         by_category = self.bucket_categories(task_forest)
         by_category = self.category_filter(by_category, args.category)
 
+        # Construct the needed filters
+        self.make_filters(args) 
+
         # Print default category tasks first
         default_tasks = by_category.pop(None, [])
-        if default_tasks:
-            self.print_task_forest(default_tasks)
+        self.print_category_forest(None, default_tasks)
 
-        # Print the rest of the tasks
-        for cat in sorted(by_category):
-            self.print_category(cat)
-            self.print_task_forest(by_category[cat])
+        # Print other categories 
+        for cat, tasks in sorted(by_category.items()):
+            self.print_category_forest(cat, tasks)

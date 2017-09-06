@@ -81,8 +81,11 @@ if __name__ == "__main__":
     edit_parser.set_defaults(func=EditTasks())
 
     args = parser.parse_args()
+    args.func(args)
+    '''
     try:
         args.func(args)
     except AttributeError as e:
         print(e)
         parser.print_help()
+    '''
