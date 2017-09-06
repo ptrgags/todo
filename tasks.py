@@ -57,6 +57,7 @@ class Task:
 
     @classmethod
     def build_forest(cls, tasks):
+        # TODO:  Use build_task_table
         task_table = {t.eid: t for t in tasks}
         forest = []
 
@@ -73,3 +74,19 @@ class Task:
                 task_table[task.parent_id].subtasks.append(task)
 
         return {t.eid: t for t in forest}
+
+    @classmethod
+    def build_task_table(cls, tasks):
+        """
+        The task table is a map of {eid -> task} where all the parent/child
+        connections are created in the task objects.
+        """
+        task_table = {t.eid: t for t in tasks}
+        for task in tasks:
+            if task.parent_id in task_table:
+                task_table[task.parent_id].subtasks.append(task)
+            elif task.parent_id is not None:
+                # Parent not found and not a top-level task
+                message = "Warning: orphan task {}".format(task)
+                print(color(message, fg="yellow")) 
+        return task_table
