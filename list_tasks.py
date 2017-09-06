@@ -48,9 +48,9 @@ class ListTasks:
             TaskTable = Query()
             return db.search(TaskTable.completed != True)
 
-    def bucket_categories(self, tasks):
+    def bucket_categories(self, task_forest):
         by_category = {}
-        for task in tasks:
+        for task in task_forest.values():
             by_category.setdefault(task.category, []).append(task)
         return by_category
 
@@ -138,8 +138,8 @@ class ListTasks:
 
     def __call__(self, args):
         tasks = [Task(record) for record in self.fetch_tasks(args.show_all)]
-        task_trees = Task.build_forest(tasks)
-        by_category = self.bucket_categories(task_trees)
+        task_forest = Task.build_forest(tasks)
+        by_category = self.bucket_categories(task_forest)
         by_category = self.category_filter(by_category, args.category)
 
         # Print default category tasks first
